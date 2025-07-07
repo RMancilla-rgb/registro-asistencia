@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Supervisión de Asistencia{% endblock %}
+{% block content %}
+<h1 class="text-xl mb-4">Revisión de asistencia</h1>
+<table class="min-w-full border">
+  <thead>
+    <tr>
+      <th class="border px-4 py-2">Taller</th>
+      <th class="border px-4 py-2">Curso</th>
+      <th class="border px-4 py-2">Asistencia</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in data %}
+      <tr>
+        <td class="border px-4 py-2">{{ item.taller.nombre }}</td>
+        <td class="border px-4 py-2">{{ item.taller.curso }}</td>
+        <td class="border px-4 py-2">
+          {% if item.asistencia_pasada %}
+            ✅ Pasada
+          {% else %}
+            ❌ No pasada
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3" class="text-center py-2">No hay talleres.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

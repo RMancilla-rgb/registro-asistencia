@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Subir Asistencia{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto bg-white shadow-md rounded-lg p-6 mt-6">
+  <h1 class="text-2xl font-semibold text-gray-800 mb-6">Subir Excel de Asistencia</h1>
+  <form method="post" enctype="multipart/form-data" class="space-y-5">
+    {% csrf_token %}
+    <div>
+      <label for="id_archivo" class="block text-gray-700 font-medium mb-2">Archivo Excel de Asistencia (.xlsx)</label>
+      <input type="file" name="archivo" accept=".xlsx" id="id_archivo"
+             class="block w-full text-sm text-gray-600
+                    file:mr-4 file:py-2 file:px-4
+                    file:rounded-full file:border-0
+                    file:text-sm file:font-semibold
+                    file:bg-blue-50 file:text-blue-700
+                    hover:file:bg-blue-100" />
+      <p class="text-gray-500 text-sm mt-1">Usa la plantilla oficial con celdas B1=Taller, B2=Fecha y tabla a partir de la fila 5</p>
+    </div>
+    <div>
+      <button type="submit"
+              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow transition">
+        Procesar asistencia
+      </button>
+    </div>
+  </form>
+  {% for m in messages %}
+    <div class="mt-4 p-3 rounded-md text-sm {% if m.tags == 'success' %}bg-green-100 text-green-800{% else %}bg-red-100 text-red-800{% endif %}">
+      {{ m }}
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

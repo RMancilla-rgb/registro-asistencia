@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block title %}Seleccionar Taller{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Informe de Asistencia</h1>
+
+<form method="post" class="space-y-4">
+  {% csrf_token %}
+  <label class="block font-medium text-gray-700">Selecciona un taller:</label>
+  <select name="taller" class="w-full border rounded px-3 py-2">
+    {% for taller in talleres %}
+      <option value="{{ taller.id }}">{{ taller.nombre }} ({{ taller.curso }})</option>
+    {% endfor %}
+  </select>
+
+  <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+    Ver Asistencia
+  </button>
+</form>
+{% endblock %}

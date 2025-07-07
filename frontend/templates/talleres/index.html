@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Mis Talleres{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Talleres</h1>
+
+  {# Solo coordinador o administrador ve el botón de crear #}
+  {% if request.user.rol == 'coordinador' or request.user.rol == 'administrador' %}
+    <a href="{% url 'talleres:create' %}"
+       class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">
+      Crear Taller
+    </a>
+  {% endif %}
+
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Curso</th>
+        <th class="border px-4 py-2">Nombre</th>
+        <th class="border px-4 py-2">Profesor</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for taller in talleres %}
+        <tr>
+          <td class="border px-4 py-2">
+            {{ taller.curso.colegio.dueno.nombre }} – {{ taller.curso.colegio.nombre }} – {{ taller.curso.get_ciclo_display }} {{ taller.curso.grado }}°
+          </td>
+          <td class="border px-4 py-2">{{ taller.nombre }}</td>
+          <td class="border px-4 py-2">
+            {% if taller.profesor %}
+              {{ taller.profesor.username }}
+            {% else %}
+              <em>(sin asignar)</em>
+            {% endif %}
+          </td>
+          <td class="border px-4 py-2 space-x-2">
+            <a href="{% url 'asistencia:index' %} ?taller={{ taller.pk }}" class="text-green-600 hover:underline" >Pasar Lista</a>
+            {% if request.user.rol == 'coordinador' or request.user.rol == 'administrador' %}
+              |
+              <a href="{% url 'talleres:edit' taller.pk %} " class="text-blue-600 hover:underline">Editar</a>
+              |
+              <a href="{% url 'talleres:delete' taller.pk %}" class="text-red-600 hover:underline">Borrar</a>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="border px-4 py-2 text-center">
+            {% if request.user.rol == 'profesor' %}
+              No tienes talleres asignados.
+            {% else %}
+              No hay talleres creados.
+            {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

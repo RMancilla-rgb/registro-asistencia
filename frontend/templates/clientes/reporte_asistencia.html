@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Informe de Asistencia{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl mb-4">Informe de Asistencia</h1>
+<table class="min-w-full bg-white border">
+  <thead>
+    <tr>
+      <th class="px-4 py-2">Fecha</th>
+      <th class="px-4 py-2">Alumno</th>
+      <th class="px-4 py-2">Taller</th>
+      <th class="px-4 py-2">Curso</th>
+      <th class="px-4 py-2">Colegio</th>
+      <th class="px-4 py-2">Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in asistencias %}
+      <tr>
+        <td class="px-4 py-2">{{ a.fecha }}</td>
+        <td class="px-4 py-2">{{ a.alumno.nombre }}</td>
+        <td class="px-4 py-2">{{ a.taller.nombre }}</td>
+        <td class="px-4 py-2">{{ a.taller.curso }}</td>
+        <td class="px-4 py-2">{{ a.taller.curso.colegio.nombre }}</td>
+        <td class="px-4 py-2">{{ a.get_estado_display }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="6" class="px-4 py-2 text-center">No hay asistencia registrada.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

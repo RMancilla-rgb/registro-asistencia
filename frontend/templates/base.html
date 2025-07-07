@@ -1,0 +1,97 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Registro Asistencia{% endblock %}</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="{% static 'css/main.css' %}" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="{% url 'usuarios:home' %}" class="text-2xl font-bold text-blue-600">
+        Registro Asistencia
+      </a>
+      {% if request.user.is_authenticated %}
+      <form method="post" action="{% url 'usuarios:logout' %}">
+        {% csrf_token %}
+        <span class="mr-4">Hola, {{ request.user.username }}</span>
+        <button type="submit" class="text-red-600 hover:text-red-800">Cerrar sesión</button>
+      </form>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Contenido principal -->
+  <div class="container mx-auto px-4 py-6 flex-grow">
+    <div class="flex space-x-6">
+      {% if request.user.is_authenticated %}
+      <!-- Sidebar -->
+      <aside class="w-1/4 bg-white p-4 rounded-xl shadow self-start">
+        <h2 class="text-lg font-semibold mb-4">Menú</h2>
+        <ul class="space-y-2">
+          {% if request.user.rol == 'administrador' %}
+            <li><a href="{% url 'usuarios:user_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Usuarios</a></li>
+            <li><a href="{% url 'clientes:dueno_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Clientes</a></li>
+            <li><a href="{% url 'clientes:colegio_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Colegios</a></li>
+            <li><a href="{% url 'cursos:list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Cursos</a></li>
+            <li><a href="{% url 'cursos:alumno_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Alumnos</a></li>
+            <li><a href="{% url 'talleres:index' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Talleres</a></li>
+            <li><a href="{% url 'asistencia:reportes' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Informe Asistencia</a></li>
+          {% elif request.user.rol == 'coordinador' %}
+            <li><a href="{% url 'cursos:list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Cursos</a></li>
+            <li><a href="{% url 'usuarios:profesor_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Profesores</a></li>
+            <li><a href="{% url 'talleres:index' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Talleres</a></li>
+            <li><a href="{% url 'cursos:alumno_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Alumnos</a></li>
+            <li><a href="{% url 'asistencia:index' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Pasar Lista</a></li>
+            <li><a href="{% url 'asistencia:reportes' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Informe Asistencia</a></li>
+          {% elif request.user.rol == 'profesor' %}
+            <li><a href="{% url 'talleres:index' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Mis Talleres</a></li>
+            <li><a href="{% url 'asistencia:index' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Pasar Lista</a></li>
+          {% elif request.user.rol == 'cliente' %}
+            <li><a href="{% url 'clientes:colegio_list' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Mis Colegios</a></li>
+            <li><a href="{% url 'clientes:reporte_asistencia' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Informe Asistencia</a></li>
+          {% elif request.user.rol == 'supervisor' %}
+            <li><a href="{% url 'asistencia:supervisar_asistencia' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Supervisión diaria</a></li>
+            <li><a href="{% url 'asistencia:supervisar_colegios' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Avance por Colegio</a></li>
+            <li><a href="{% url 'asistencia:supervisar_colegios_mes' %}" class="block py-2 px-4 rounded hover:bg-gray-100">Avance mensual</a></li>
+          {% endif %}
+        </ul>
+      </aside>
+      {% endif %}
+
+      <main class="{% if request.user.is_authenticated %}flex-1 flex-grow{% else %}w-full max-w-md mx-auto{% endif %} bg-white p-6 rounded-xl shadow">
+
+        <!-- Mensajes -->
+        {% if messages %}
+          <div class="mb-4 space-y-2">
+            {% for message in messages %}
+              <div class="px-4 py-2 rounded
+                {% if message.tags == 'error' %}bg-red-100 text-red-800
+                {% elif message.tags == 'success' %}bg-green-100 text-green-800
+                {% else %}bg-gray-100 text-gray-800{% endif %}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white py-4 shadow-inner w-full text-center text-sm text-gray-600">
+    <div class="container mx-auto">
+      {% now "Y" as year %}&nbsp;&copy;&nbsp;{{ year }} Registro Asistencia
+    </div>
+  </footer>
+
+</body>
+</html>

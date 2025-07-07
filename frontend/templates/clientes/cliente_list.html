@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Gestión de Clientes{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Clientes</h1>
+  <a href="{% url 'clientes:dueno_create' %}" class="mb-4 inline-block px-4 py-2 rounded bg-green-600 text-white">
+    + Nueva Cliente
+  </a>
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Nombre</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in duenos %}
+      <tr>
+        <td class="border px-4 py-2">{{ d.nombre }}</td>
+        <td class="border px-4 py-2">
+          <a href="{% url 'clientes:dueno_edit' d.pk %}" class="text-blue-600">Editar</a> |
+          <a href="{% url 'clientes:dueno_delete' d.pk %}" class="text-red-600">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="2" class="border px-4 py-2 text-center">No hay clientes.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

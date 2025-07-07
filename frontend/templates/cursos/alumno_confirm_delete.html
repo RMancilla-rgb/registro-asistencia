@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}Borrar Alumno{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">¿Borrar Alumno?</h1>
+  <p>Vas a borrar: <strong>{{ alumno.nombre }}</strong> ({{ alumno.rut }}).</p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="px-4 py-2 rounded bg-red-600 text-white">Confirmar</button>
+    <a href="{% url 'cursos:alumno_list' %}" class="ml-4">Cancelar</a>
+  </form>
+{% endblock %}

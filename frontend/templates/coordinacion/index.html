@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Panel Coordinador{% endblock %}
+
+{% block content %}
+  <h1>Coordinación</h1>
+  <p>Bienvenido, {{ request.user.get_full_name }}. Aquí podrás:</p>
+  <ul>
+    <li><a href="#">Crear talleres</a></li>
+    <li><a href="#">Asignar profesores y alumnos</a></li>
+  </ul>
+{% endblock %}

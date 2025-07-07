@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block title %}Colegios{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Colegios</h1>
+
+  {% if request.user.rol == 'administrador' %}
+    <a href="{% url 'clientes:colegio_create' %}" class="mb-4 inline-block px-4 py-2 bg-blue-600 text-white rounded">
+      Crear Colegio
+    </a>
+  {% endif %}
+
+  <form method="get" class="flex space-x-4 mb-4">
+    <input type="text" name="q" placeholder="Buscar colegio..." value="{{ request.GET.q }}" class="px-3 py-2 border rounded w-1/2">
+
+    {% if duenos %}
+      <select name="dueno" class="px-3 py-2 border rounded">
+        <option value="">Todos los clientes</option>
+        {% for d in duenos %}
+          <option value="{{ d.id }}" {% if request.GET.dueno == d.id|stringformat:"s" %}selected{% endif %}>
+            {{ d.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    {% endif %}
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrar
+    </button>
+  </form>
+
+  <table class="min-w-full w-full bg-white border">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Nombre</th>
+        <th class="px-4 py-2">Cliente</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for colegio in colegios %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ colegio.nombre }}</td>
+          <td class="px-4 py-2">{{ colegio.dueno.nombre }}</td>
+          <td class="px-4 py-2">
+            {% if request.user.rol == 'administrador' %}
+              <a href="{% url 'clientes:colegio_edit' colegio.pk %}" class="text-blue-600 hover:underline">Editar</a> |
+              <a href="{% url 'clientes:colegio_delete' colegio.pk %}" class="text-red-600 hover:underline">Borrar</a>
+            {% else %}
+              <em>No autorizado</em>
+            {% endif %}
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3" class="px-4 py-2">No hay colegios registrados.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

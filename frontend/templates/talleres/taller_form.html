@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <div class="max-w-2xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-semibold mb-6 text-center">{{ title }}</h1>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Nombre -->
+      <div>
+        <label for="{{ form.nombre.id_for_label }}" class="block font-medium mb-1">Nombre:</label>
+        {{ form.nombre|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.nombre.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.nombre.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Curso -->
+      <div>
+        <label for="id_curso" class="block font-medium mb-1">Curso:</label>
+        <select name="curso" id="id_curso"
+                class="border rounded p-2 w-full"
+                onchange="window.location='?curso='+this.value;">
+          <option value="">---------</option>
+          {% for c in cursos %}
+            <option value="{{ c.pk }}" {% if curso_obj and c.pk == curso_obj.pk %}selected{% endif %}>{{ c.colegio.dueno.nombre }} – {{ c.colegio.nombre }} – {{ c.get_ciclo_display }} {{ c.grado }}°</option>
+          {% endfor %}
+        </select>
+        {% if not curso_obj %}
+          <p class="text-gray-600 text-sm mt-1">Selecciona primero un curso.</p>
+        {% endif %}
+      </div>
+
+      <!-- Cliente y Colegio -->
+      {% if curso_obj %}
+        <div class="bg-gray-50 border border-gray-300 rounded p-3 text-sm text-gray-700">
+          <p><strong>Cliente:</strong> {{ curso_obj.colegio.dueno.nombre }}</p>
+          <p><strong>Colegio:</strong> {{ curso_obj.colegio.nombre }}</p>
+        </div>
+      {% endif %}
+
+      <!-- Profesor -->
+      <div>
+        <label for="{{ form.profesor.id_for_label }}" class="block font-medium mb-1">Profesor:</label>
+        {{ form.profesor|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.profesor.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.profesor.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Número de sesiones planificadas -->
+      <div>
+        <label for="{{ form.numero_sesiones.id_for_label }}" class="block font-medium mb-1">Número de sesiones planificadas:</label>
+        {{ form.numero_sesiones|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.numero_sesiones.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.numero_sesiones.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Alumnos -->
+      <div>
+        <label class="block font-medium mb-1">Alumnos:</label>
+        {% if curso_obj %}
+          {% if form.fields.alumnos.queryset %}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {% for alumno in form.fields.alumnos.queryset %}
+                <label class="flex items-center">
+                  <input type="checkbox" name="alumnos" value="{{ alumno.pk }}" class="form-checkbox mr-2" {% if alumno.pk|stringformat:"s" in alumnos_sel %}checked{% endif %}>
+                  <span>{{ alumno.nombre }} ({{ alumno.dni }})</span>
+                </label>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-gray-600 text-sm">No hay alumnos en este curso.</p>
+          {% endif %}
+        {% else %}
+          <p class="text-gray-600 text-sm">Selecciona primero un curso.</p>
+        {% endif %}
+        {% if form.alumnos.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.alumnos.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-between pt-4">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">{{ title }}</button>
+        <a href="{% url 'talleres:index' %}" class="bg-gray-200 text-gray-800 px-4 py-2 rounded hover:bg-gray-300">Cancelar</a>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,54 @@
+<!-- registro_asistencia/frontend/templates/cursos/list.html -->
+{% extends 'base.html' %}
+{% block title %}Gestión de Cursos{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Cursos</h1>
+  <a href="{% url 'cursos:create' %}" class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">Nuevo Curso</a>
+
+
+  <form method="get" class="flex space-x-4 mb-4">
+    <input type="text" name="q" placeholder="Buscar curso..." value="{{ request.GET.q }}" class="px-3 py-2 border rounded w-1/2">
+
+    <select name="colegio" class="px-3 py-2 border rounded">
+      <option value="">Todos</option>
+      {% for c in colegios %}
+        <option value="{{ c.id }}" {% if request.GET.colegio == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.nombre }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrar
+    </button>
+  </form>
+
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Colegio</th>
+        <th class="border px-4 py-2">Ciclo</th>
+        <th class="border px-4 py-2">Grado</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for curso in cursos %}
+      <tr>
+        <td class="border px-4 py-2">{{ curso.colegio.nombre }}</td>
+        <td class="border px-4 py-2">{{ curso.get_ciclo_display }}</td>
+        <td class="border px-4 py-2">{{ curso.grado }}°</td>
+        <td class="border px-4 py-2">
+          <a href="{% url 'cursos:edit' curso.pk %}" class="text-blue-600 hover:underline">Editar</a> |
+          <a href="{% url 'cursos:delete' curso.pk %}" class="text-red-600 hover:underline">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="4" class="border px-4 py-2 text-center">No hay cursos.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

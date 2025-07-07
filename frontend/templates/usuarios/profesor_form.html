@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <div class="max-w-xl mx-auto bg-white p-6 rounded shadow">
+    <h1 class="text-2xl font-semibold mb-6 text-center">{{ title }}</h1>
+
+    <form method="post" class="space-y-6">
+      {% csrf_token %}
+
+      <!-- Username -->
+      <div>
+        <label for="{{ form.username.id_for_label }}" class="block font-medium mb-1">Username:</label>
+        {{ form.username|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.username.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.username.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Email -->
+      <div>
+        <label for="{{ form.email.id_for_label }}" class="block font-medium mb-1">Email:</label>
+        {{ form.email|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.email.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Contraseñas (solo si están presentes en el form) -->
+      {% if form.password1 %}
+      <div>
+        <label for="{{ form.password1.id_for_label }}" class="block font-medium mb-1">Contraseña:</label>
+        {{ form.password1|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.password1.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% if form.password2 %}
+      <div>
+        <label for="{{ form.password2.id_for_label }}" class="block font-medium mb-1">Confirmar contraseña:</label>
+        {{ form.password2|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.password2.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Colegio (solo si no está oculto) -->
+      {% if form.colegio and not form.colegio.is_hidden %}
+      <div>
+        <label for="{{ form.colegio.id_for_label }}" class="block font-medium mb-1">Colegio:</label>
+        {{ form.colegio|add_class:"w-full px-3 py-2 border rounded" }}
+        {% if form.colegio.errors %}
+          <p class="text-red-600 text-sm mt-1">{{ form.colegio.errors.0 }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      <!-- Rol oculto (si existe) -->
+      {% if form.rol %}
+        {{ form.rol.as_hidden }}
+      {% endif %}
+
+      <!-- Botones -->
+      <div class="flex justify-between">
+        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+          {{ title }}
+        </button>
+        <a href="{% url 'usuarios:profesor_list' %}" class="bg-gray-200 px-4 py-2 rounded text-gray-800 hover:bg-gray-300">
+          Cancelar
+        </a>
+      </div>
+    </form>
+
+    <!-- Enlace para establecer nueva contraseña -->
+    {% if form.instance.pk %}
+      <div class="mt-6 text-sm text-gray-700">
+        <p class="text-sm text-gray-600">
+          ¿Necesitas cambiar la contraseña de este usuario?
+          <a href="{% url 'usuarios:user_set_password' form.instance.id %}" class="text-blue-600 underline hover:text-blue-800">
+            Establecer nueva contraseña
+          </a>
+        </p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}
