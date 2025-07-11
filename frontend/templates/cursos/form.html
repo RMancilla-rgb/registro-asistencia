@@ -1,25 +1,23 @@
-<!-- registro_asistencia/frontend/templates/cursos/form.html -->
+{# frontend/templates/cursos/form.html #}
 {% extends 'base.html' %}
 {% block title %}{{ title }}{% endblock %}
 
 {% block content %}
   <h1 class="text-2xl mb-4">{{ title }}</h1>
+
   <form method="post" class="space-y-4">
     {% csrf_token %}
-    <div>
-      <label class="block mb-1">Colegio:</label>
-      {{ form.colegio }}
+    {{ form.as_p }}
+
+    <div class="space-x-2">
+      <button type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded">
+        {{ title }}
+      </button>
+      <a href="{% url 'cursos:list' %}"
+         class="px-4 py-2 bg-gray-200 rounded">
+        Cancelar
+      </a>
     </div>
-    <div>
-      <label class="block mb-1">Ciclo:</label>
-      {{ form.ciclo }}
-    </div>
-    <div>
-      <label class="block mb-1">Grado:</label>
-      {{ form.grado }}
-      <small class="text-gray-600">1–8 si es Básica, 1–4 si es Media</small>
-    </div>
-    <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white">{{ title }}</button>
-    <a href="{% url 'cursos:list' %}" class="ml-4">Cancelar</a>
   </form>
 {% endblock %}

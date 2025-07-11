@@ -7,12 +7,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-lw4kzeg-7oi%0l@9_x=@dsj%35&l%pch)pctzga2@rjqf#v)b%'
 
 # 🔴 Producción
-#DEBUG = False
-#ALLOWED_HOSTS = ['miapp-eb.elasticbeanstalk.com', 'ligavlc.cl', 'www.ligavlc.cl']
+DEBUG = False
+ALLOWED_HOSTS = ['sofia05.pythonanywhere.com']
 
 # ✅ Para desarrollo local (activar solo en local)
-DEBUG = True
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+#DEBUG = True
+#ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -75,13 +75,25 @@ WSGI_APPLICATION = 'core.wsgi.application'
 #    }
 #}
 
-# ✅ Desarrollo local con SQLite (activar solo localmente)
+# 🔴 Producción con MYSQL (activa)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-         'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sofia05$registro_asistencia',
+        'USER': 'sofia05',
+        'PASSWORD': 'E8NFxTyC$iH8wrq',
+        'HOST': 'sofia05.mysql.pythonanywhere-services.com',
+        'PORT': '3306',
     }
 }
+
+# ✅ Desarrollo local con SQLite (activar solo localmente)
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#    }
+#}
 
 AUTH_PASSWORD_VALIDATORS = [
 #    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -103,6 +115,6 @@ STATIC_ROOT = BASE_DIR.parent / 'staticfiles'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_URL = reverse_lazy('usuarios:login')
-LOGIN_REDIRECT_URL = reverse_lazy('usuarios:home')
-LOGOUT_REDIRECT_URL = reverse_lazy('usuarios:login')
+LOGIN_URL           = reverse_lazy('login')
+LOGIN_REDIRECT_URL  = reverse_lazy('home')
+LOGOUT_REDIRECT_URL = reverse_lazy('home')

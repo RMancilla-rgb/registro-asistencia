@@ -1,4 +1,5 @@
 # registro_asistencia/backend/cursos/forms.py
+
 from django import forms
 from .models import Curso, Alumno
 from clientes.models import Colegio
@@ -6,45 +7,56 @@ from clientes.models import Colegio
 class CursoForm(forms.ModelForm):
     class Meta:
         model = Curso
-        fields = '__all__'
+        fields = ['colegio', 'ciclo', 'grado', 'seccion']
         widgets = {
             'colegio': forms.Select(attrs={'class': 'border p-2 rounded'}),
             'ciclo':   forms.Select(attrs={'class': 'border p-2 rounded'}),
             'grado':   forms.NumberInput(attrs={'class': 'border p-2 rounded', 'min': 1}),
+            'seccion': forms.Select(attrs={'class': 'border p-2 rounded'}),
         }
 
     def __init__(self, *args, **kwargs):
+        # 1) Extraemos el user de kwargs, para no pasarlo al form base
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        if user and hasattr(user, 'rol') and user.rol == 'coordinador':
-            colegio = getattr(user, 'colegio', None)
-            if colegio:
-                self.fields['colegio'].queryset = Colegio.objects.filter(pk=colegio.pk)
-            else:
-                self.fields['colegio'].queryset = Colegio.objects.none()
-        else:
-            self.fields['colegio'].queryset = Colegio.objects.all()
+        # 2) Si es coordinador, limitamos colegios a su propio colegio
+        if user and getattr(user, 'rol', None) == 'coordinador':
+            self.fields['colegio'].queryset = Colegio.objects.filter(id=user.colegio_id)
+
+        # 3) Lógica para filtrar secciones ya usadas
+        # Obtenemos valores actuales o iniciales
+        colegio = self.initial.get('colegio') or (self.instance.colegio if self.instance.pk else None)
+        ciclo   = self.initial.get('ciclo')   or getattr(self.instance, 'ciclo', None)
+        grado   = self.initial.get('grado')   or getattr(self.instance, 'grado', None)
+
+        if colegio and ciclo and grado:
+            usadas = Curso.objects.filter(
+                colegio=colegio, ciclo=ciclo, grado=grado
+            ).values_list('seccion', flat=True)
+            disponibles = [
+                (letra, letra)
+                for letra, _ in Curso.SECCIONES
+                if letra not in usadas or letra == getattr(self.instance, 'seccion', None)
+            ]
+            self.fields['seccion'].choices = disponibles
+
 
 class AlumnoForm(forms.ModelForm):
     class Meta:
         model = Alumno
         fields = ['nombre', 'rut', 'curso']
         widgets = {
-            'nombre': forms.TextInput(attrs={'class': 'border p-2 rounded w-full'}),
-            'rut': forms.TextInput(attrs={'class': 'border p-2 rounded w-full'}),
-            'curso': forms.Select(attrs={'class': 'border p-2 rounded w-full'}),
+            'nombre': forms.TextInput(attrs={'class': 'border p-2 rounded'}),
+            'rut':    forms.TextInput(attrs={'class': 'border p-2 rounded'}),
+            'curso':  forms.Select(attrs={'class': 'border p-2 rounded'}),
         }
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
 
-        if user and hasattr(user, 'rol') and user.rol == 'coordinador':
-            colegio = getattr(user, 'colegio', None)
-            if colegio:
-                self.fields['curso'].queryset = Curso.objects.filter(colegio=colegio)
-            else:
-                self.fields['curso'].queryset = Curso.objects.none()
-        else:
-            self.fields['curso'].queryset = Curso.objects.select_related('colegio').all()
+        # Si es coordinador, sólo dejar cursos de su colegio
+        if user and getattr(user, 'rol', None) == 'coordinador':
+            self.fields['curso'].queryset = Curso.objects.filter(colegio=user.colegio)
+
