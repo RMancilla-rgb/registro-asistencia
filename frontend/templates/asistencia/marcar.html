@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% block title %}Pasar Lista – {{ taller.nombre }}{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">
+    Pasar Lista: {{ taller.nombre }} – {{ fecha }}
+  </h1>
+
+    {% if messages %}
+    <div class="mb-4">
+      {% for message in messages %}
+        <div class="p-4 mb-2 rounded 
+                    {% if message.tags == 'info' %}
+                      bg-blue-100 text-blue-800
+                    {% elif message.tags == 'warning' %}
+                      bg-yellow-100 text-yellow-800
+                    {% endif %}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+
+  <form method="post" class="space-y-6">
+    {% csrf_token %}
+
+    <!-- Estado de la sesión -->
+    <div>
+      <label class="font-medium">Estado de la sesión:</label>
+      <div class="mt-2 space-x-6">
+        {% for code,label in estados %}
+          <label class="inline-flex items-center">
+            <input
+              type="radio"
+              name="estado_sesion"
+              value="{{ code }}"
+              {% if sesion and sesion.estado == code %}checked{% elif not sesion and forloop.first and code == 'R' %}checked{% endif %}
+              class="form-radio"
+            >
+            <span class="ml-2">{{ label }}</span>
+          </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- Motivo extra: oculto hasta que elijan "Otro" -->
+    <div id="motivo_section" class="mb-4 hidden">
+      <label for="motivo_extra" class="font-medium">Motivo / Comentario:</label>
+      <textarea
+        id="motivo_extra"
+        name="motivo_extra"
+        class="w-full border p-2 rounded"
+        rows="2"
+      >{% if sesion %}{{ sesion.motivo_extra }}{% endif %}</textarea>
+    </div>
+
+    <!-- Tabla de asistencia, solo si fue realizada -->
+    <div id="asistencia-section" class="mb-4">
+      <table class="min-w-full border">
+        <thead>
+          <tr>
+            <th class="border px-4 py-2">Alumno</th>
+            <th class="border px-4 py-2">Presente</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for alumno in alumnos %}
+          <tr>
+            <td class="border px-4 py-2">{{ alumno.nombre }}</td>
+            <td class="border px-4 py-2 text-center">
+              <input
+                type="checkbox"
+                name="presente_{{ alumno.pk }}"
+                {% if alumno.pk in present_ids %}checked{% endif %}
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Botones -->
+    <div>
+      <button type="submit" class="px-4 py-2 rounded bg-blue-600 text-white">
+        Guardar Asistencia
+      </button>
+      <a href="{% url 'asistencia:index' %}" class="ml-4 text-gray-600 hover:underline">
+        Volver
+      </a>
+    </div>
+  </form>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const radios      = document.querySelectorAll('input[name="estado_sesion"]');
+      const asistSec    = document.getElementById('asistencia-section');
+      const motivoSec   = document.getElementById('motivo_section');
+
+      function toggleSections() {
+        const value = document.querySelector('input[name="estado_sesion"]:checked').value;
+        // Mostrar tabla de asistencia solo si 'Realizada' (R)
+        asistSec.style.display = (value === 'R') ? 'block' : 'none';
+        // Mostrar textarea de motivo solo si 'Otro' (O)
+        motivoSec.style.display = (value === 'O') ? 'block' : 'none';
+      }
+
+      radios.forEach(r => r.addEventListener('change', toggleSections));
+      // Aplicar al cargar para estado inicial
+      toggleSections();
+    });
+  </script>
+{% endblock %}

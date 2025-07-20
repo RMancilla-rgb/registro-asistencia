@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Usuarios</h1>
+  <a href="{% url 'usuarios:user_create' %}"
+     class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">
+    Crear Usuario
+  </a>
+
+  <form method="get" class="flex space-x-4 mb-4">
+    <input type="text" name="q" placeholder="Buscar usuario..." value="{{ request.GET.q }}" class="px-3 py-2 border rounded w-1/2">
+
+    <select name="rol" class="px-3 py-2 border rounded">
+      <option value="">Todos los roles</option>
+      <option value="administrador" {% if request.GET.rol == "administrador" %}selected{% endif %}>Administrador</option>
+      <option value="coordinador" {% if request.GET.rol == "coordinador" %}selected{% endif %}>Coordinador</option>
+      <option value="cliente" {% if request.GET.rol == "cliente" %}selected{% endif %}>Cliente</option>
+      <option value="profesor" {% if request.GET.rol == "profesor" %}selected{% endif %}>Profesor</option>
+      <option value="supervisor" {% if request.GET.rol == "supervisor" %}selected{% endif %}>Supervisor</option>
+    </select>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrar
+    </button>
+  </form>
+
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Username</th>
+        <th class="border px-4 py-2">Rol</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td class="border px-4 py-2">{{ u.username }}</td>
+        <td class="border px-4 py-2">{{ u.get_rol_display }}</td>
+        <td class="border px-4 py-2">
+          <a href="{% url 'usuarios:user_edit' u.pk %}" class="text-blue-600">Editar</a> |
+          <a href="{% url 'usuarios:user_delete' u.pk %}" class="text-red-600">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" class="border px-4 py-2 text-center">No hay usuarios.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

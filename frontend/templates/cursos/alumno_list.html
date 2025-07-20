@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Alumnos{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Alumnos</h1>
+
+  <a href="{% url 'cursos:alumno_create' %}" class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">
+    Nuevo Alumno
+  </a>
+
+  <form method="get" class="flex flex-wrap gap-4 mb-4">
+    <input type="text" name="q" placeholder="Buscar alumno..." value="{{ request.GET.q }}" class="px-3 py-2 border rounded w-full md:w-1/3">
+
+    <select name="colegio" class="px-3 py-2 border rounded w-full md:w-1/4">
+      <option value="">Todos</option>
+      {% for c in colegios %}
+        <option value="{{ c.id }}" {% if request.GET.colegio == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.nombre }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <select name="curso" class="px-3 py-2 border rounded w-full md:w-1/4">
+      <option value="">Todos</option>
+      {% for c in cursos %}
+        <option value="{{ c.id }}" {% if request.GET.curso == c.id|stringformat:"s" %}selected{% endif %}>
+          {{ c.colegio.nombre }} – {{ c.get_ciclo_display }} {{ c.grado }}°
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrar
+    </button>
+  </form>
+
+  <table class="min-w-full w-full bg-white border">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Nombre</th>
+        <th class="px-4 py-2">RUT</th>
+        <th class="px-4 py-2">Curso</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for alumno in alumnos %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ alumno.nombre }}</td>
+          <td class="px-4 py-2">{{ alumno.rut }}</td>
+          <td class="px-4 py-2">{{ alumno.curso }}</td>
+          <td class="px-4 py-2">
+            <a href="{% url 'cursos:alumno_edit' alumno.pk %}" class="text-blue-600 hover:underline">Editar</a> |
+            <a href="{% url 'cursos:alumno_delete' alumno.pk %}" class="text-red-600 hover:underline">Borrar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="4" class="px-4 py-2">No hay alumnos registrados.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

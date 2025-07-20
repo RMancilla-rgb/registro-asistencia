@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Panel Principal{% endblock %}
+
+{% block content %}
+<div class="p-6">
+  <h1 class="text-3xl mb-4">¡Bienvenido, {{ request.user.get_full_name }}!</h1>
+  <p>Selecciona tu módulo según tu rol:</p>
+  <ul class="list-disc list-inside mt-4 space-y-2">
+    {% if request.user.rol == 'administrador' %}
+      <li>
+        <a href="{% url 'usuarios:user_list' %}" class="text-blue-600 hover:underline">
+          Gestión de Usuarios
+        </a>
+      </li>
+    {% elif request.user.rol == 'coordinador' %}
+      <li>
+        <a href="{% url 'coordinacion:index' %}" class="text-blue-600 hover:underline">
+          Panel Coordinación
+        </a>
+      </li>
+    {% elif request.user.rol == 'profesor' %}
+      <li>
+        <a href="{% url 'talleres:index' %}" class="text-blue-600 hover:underline">
+          Mis Talleres
+        </a>
+      </li>
+    {% elif request.user.rol == 'cliente' %}
+      <li>
+        <a href="{% url 'clientes:index' %}" class="text-blue-600 hover:underline">
+          Estadísticas Cliente
+        </a>
+      </li>
+    {% endif %}
+    <li>
+      <a href="{% url 'usuarios:logout' %}">Cerrar sesión</a>
+    </li>
+  </ul>
+  {% if error %}
+    <div class="mt-6 p-4 bg-red-100 text-red-700 rounded">
+      {{ error }}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Supervisión diaria{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto mt-6 bg-white p-6 rounded-lg shadow">
+  <h1 class="text-2xl font-semibold mb-4">Revisión de asistencia – {{ hoy|date:"d/m/Y" }}</h1>
+  <div class="overflow-x-auto">
+    <table class="min-w-full table-auto">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="px-4 py-2 border">Taller</th>
+          <th class="px-4 py-2 border">Curso</th>
+          <th class="px-4 py-2 border text-center">Asistencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rows %}
+        <tr class="hover:bg-gray-50">
+          <td class="px-4 py-2 border">{{ r.taller.nombre }}</td>
+          <td class="px-4 py-2 border">{{ r.taller.curso }}</td>
+          <td class="px-4 py-2 border text-center">
+            {% if r.pasada %}
+              {% if r.estado == 'R' %}
+                <span class="text-green-600">✔ Pasada</span>
+              {% elif r.estado == 'F' %}
+                <span class="text-yellow-600">¡Feriado!</span>
+              {% elif r.estado == 'P' %}
+                <span class="text-red-600">Profesor ausente</span>
+              {% else %}
+                <span class="text-gray-600">Otro</span>
+              {% endif %}
+            {% else %}
+              <span class="text-red-600">✘ No pasada</span>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block title %}Registro de Asistencia{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Registro de Asistencia</h1>
+
+<!-- Botón para subir Excel de Asistencia -->
+<div class="mb-4">
+  <a href="{% url 'asistencia:subir_asistencia_excel' %}"
+     class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded shadow">
+    Subir Excel de Asistencia
+  </a>
+</div>
+
+<div class="grid gap-4">
+  {% for taller in talleres %}
+    <div class="p-4 border rounded-xl shadow bg-white flex justify-between items-center">
+      <div>
+        <h2 class="text-lg font-bold text-gray-800">{{ taller.nombre }}</h2>
+        <p class="text-sm text-gray-500">{{ taller.curso }}</p>
+        {% if taller.asistencia_pasada %}
+          <p class="text-green-600 font-medium mt-2">
+            ✅ 
+            {% if taller.estado_sesion %}
+              Sesión pasada ({{ taller.estado_sesion }})
+            {% else %}
+              Asistencia registrada
+            {% endif %}
+          </p>
+        {% else %}
+          <p class="text-red-600 font-medium mt-2">❌ Asistencia pendiente</p>
+        {% endif %}
+      </div>
+      <!-- Mostrar botón de pasar lista si no se ha pasado o para editar si es profesor -->
+      {% if not taller.asistencia_pasada or request.user.rol == 'profesor' %}
+        <a href="{% url 'asistencia:marcar' taller.pk %}"
+           class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow">
+          Pasar Lista
+        </a>
+      {% endif %}
+    </div>
+  {% empty %}
+    <p class="text-gray-600">No tienes talleres asignados.</p>
+  {% endfor %}
+</div>
+{% endblock %}

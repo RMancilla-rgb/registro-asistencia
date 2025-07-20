@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Cliente{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Informe Cliente</h1>
+  <p class="mb-4">Tienes <strong>{{ total_colegios }}</strong> colegios registrados.</p>
+
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Colegio</th>
+        <th class="border px-4 py-2"># Talleres</th>
+        <th class="border px-4 py-2"># Alumnos</th>
+        <th class="border px-4 py-2"># Asistencias</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in stats %}
+      <tr>
+        <td class="border px-4 py-2">{{ s.colegio.nombre }}</td>
+        <td class="border px-4 py-2">{{ s.talleres }}</td>
+        <td class="border px-4 py-2">{{ s.alumnos }}</td>
+        <td class="border px-4 py-2">{{ s.asistencias }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

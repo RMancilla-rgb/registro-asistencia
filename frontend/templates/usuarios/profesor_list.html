@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Profesores{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Profesores</h1>
+  <a href="{% url 'usuarios:profesor_create' %}"
+     class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">
+    Nuevo Profesor
+  </a>
+
+  <table class="min-w-full border bg-white">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Username</th>
+        <th class="border px-4 py-2">Email</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in profs %}
+        <tr>
+          <td class="border px-4 py-2">{{ p.username }}</td>
+          <td class="border px-4 py-2">{{ p.email }}</td>
+          <td class="border px-4 py-2">
+            <a href="{% url 'usuarios:profesor_edit' p.pk %}" class="text-blue-600 mr-2">Editar</a> |
+            <a href="{% url 'usuarios:profesor_delete' p.pk %}" class="text-red-600 ml-2">Borrar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3" class="border px-4 py-2 text-center">No hay profesores.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

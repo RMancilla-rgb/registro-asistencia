@@ -1,0 +1,23 @@
+{# frontend/templates/cursos/form.html #}
+{% extends 'base.html' %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">{{ title }}</h1>
+
+  <form method="post" class="space-y-4">
+    {% csrf_token %}
+    {{ form.as_p }}
+
+    <div class="space-x-2">
+      <button type="submit"
+              class="px-4 py-2 bg-blue-600 text-white rounded">
+        {{ title }}
+      </button>
+      <a href="{% url 'cursos:list' %}"
+         class="px-4 py-2 bg-gray-200 rounded">
+        Cancelar
+      </a>
+    </div>
+  </form>
+{% endblock %}

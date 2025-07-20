@@ -1,0 +1,70 @@
+{# frontend/templates/cursos/list.html #}
+{% extends 'base.html' %}
+{% block title %}Cursos{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Cursos</h1>
+
+  {% if request.user.rol == 'administrador' or request.user.rol == 'coordinador' %}
+    <a href="{% url 'cursos:create' %}"
+       class="mb-4 inline-block px-4 py-2 bg-blue-600 text-white rounded">
+      Crear Curso
+    </a>
+  {% endif %}
+
+  <form method="get" class="flex space-x-4 mb-4">
+    <input type="text"
+           name="q"
+           placeholder="Buscar curso..."
+           value="{{ request.GET.q }}"
+           class="px-3 py-2 border rounded w-1/2">
+
+    <select name="colegio" class="px-3 py-2 border rounded">
+      <option value="">Todos los colegios</option>
+      {% for colegio in colegios %}
+        <option value="{{ colegio.id }}"
+                {% if request.GET.colegio == colegio.id|stringformat:"s" %}selected{% endif %}>
+          {{ colegio.nombre }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      Filtrar
+    </button>
+  </form>
+
+  <table class="min-w-full w-full bg-white border">
+    <thead>
+      <tr>
+        <th class="px-4 py-2">Colegio</th>
+        <th class="px-4 py-2">Ciclo</th>
+        <th class="px-4 py-2">Grado</th>
+        <th class="px-4 py-2">Sección</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for curso in cursos %}
+        <tr class="border-t">
+          <td class="px-4 py-2">{{ curso.colegio.nombre }}</td>
+          <td class="px-4 py-2">{{ curso.get_ciclo_display }}</td>
+          <td class="px-4 py-2">{{ curso.grado }}°</td>
+          <td class="px-4 py-2">{{ curso.seccion }}</td>
+          <td class="px-4 py-2 whitespace-nowrap">
+            <a href="{% url 'cursos:edit' curso.pk %}"
+               class="text-blue-600 hover:underline">Editar</a>
+             |
+            <a href="{% url 'cursos:delete' curso.pk %}"
+               class="text-red-600 hover:underline">Borrar</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="5" class="px-4 py-2">No hay cursos registrados.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

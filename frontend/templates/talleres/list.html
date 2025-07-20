@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Mis Talleres{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl mb-4">Mis Talleres</h1>
+
+  {% if request.user.rol != 'profesor' %}
+    <a href="{% url 'talleres:create' %}" class="mb-4 inline-block px-4 py-2 rounded bg-blue-600 text-white">
+      Nuevo Taller
+    </a>
+  {% endif %}
+
+  <form method="get" class="flex gap-2 mb-4">
+    <input type="text" name="q" placeholder="Buscar curso..." value="{{ busqueda|default:'' }}" class="border rounded px-2 py-1" />
+
+    <select name="curso" class="border rounded px-2 py-1">
+      <option value="todos">Todos</option>
+      {% for curso in cursos %}
+        <option value="{{ curso.id }}" {% if curso.id|stringformat:"s" == curso_seleccionado %}selected{% endif %}>
+          {{ curso }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit" class="bg-blue-600 text-white px-4 py-1 rounded">Filtrar</button>
+  </form>
+
+  <table class="min-w-full border">
+    <thead>
+      <tr>
+        <th class="border px-4 py-2">Nombre</th>
+        <th class="border px-4 py-2">Curso</th>
+        <th class="border px-4 py-2">Profesor</th>
+        <th class="border px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in talleres %}
+      <tr>
+        <td class="border px-4 py-2">{{ t.nombre }}</td>
+        <td class="border px-4 py-2">{{ t.curso }}</td>
+        <td class="border px-4 py-2">{{ t.profesor }}</td>
+        <td class="border px-4 py-2">
+          <a href="{% url 'asistencia:marcar' t.pk %}" class="text-green-600">Pasar Lista</a>
+          {% if request.user.rol != 'profesor' %}
+            | <a href="{% url 'talleres:edit' t.pk %}" class="text-blue-600">Editar</a>
+            | <a href="{% url 'talleres:delete' t.pk %}" class="text-red-600">Borrar</a>
+          {% endif %}
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center py-2">No hay talleres.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+{% endblock %}

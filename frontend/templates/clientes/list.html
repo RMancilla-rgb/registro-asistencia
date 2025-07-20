@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+  <h1 class="text-2xl font-semibold mb-4">Clientes</h1>
+
+  <a href="{% url 'clientes:create' %}"
+     class="inline-block mb-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+    + Nueva Cliente
+  </a>
+
+  <table class="min-w-full bg-white shadow rounded overflow-hidden">
+    <thead class="bg-gray-100">
+      <tr>
+        <th class="px-4 py-2 text-left">Nombre</th>
+        <th class="px-4 py-2 text-left">Dirección</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for corp in clientes %}
+      <tr class="border-t">
+        <td class="px-4 py-2">{{ corp.nombre }}</td>
+        <td class="px-4 py-2">{{ corp.direccion }}</td>
+        <td class="px-4 py-2 text-center space-x-2">
+          <a href="{% url 'clientes:edit' corp.pk %}" class="text-blue-600 hover:underline">Editar</a>
+          <a href="{% url 'clientes:delete' corp.pk %}" class="text-red-600 hover:underline">Borrar</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3" class="px-4 py-2 text-center text-gray-500">
+          No hay clientes.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

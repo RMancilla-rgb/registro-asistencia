@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Informe de {{ taller.nombre }}{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-semibold mb-6">Informe de Asistencia: {{ taller.nombre }}</h1>
+
+<a href="{% url 'asistencia:descargar_excel' taller.id %}" class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
+  Descargar Informe Excel
+</a>
+
+<table class="min-w-full border mt-4">
+  <thead>
+    <tr>
+      <th class="border px-4 py-2">Fecha</th>
+      <th class="border px-4 py-2">Alumno</th>
+      <th class="border px-4 py-2">Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for a in registros %}
+    <tr>
+      <td class="border px-4 py-2">{{ a.fecha|date:"j \\de F \\de Y" }}</td>
+      <td class="border px-4 py-2">{{ a.alumno }}</td>
+      <td class="border px-4 py-2">{{ a.get_estado_display }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="3" class="text-center py-2">No hay asistencia registrada para este taller.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
